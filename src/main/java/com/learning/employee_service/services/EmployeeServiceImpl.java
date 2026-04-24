@@ -44,6 +44,7 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
     @Override
     public EmployeeDetailsDto createEmployee(EmployeeCreateDto creationDetails) {
         EmployeeDetailsDto employeeDetailsDto = employeeMapper.mapCreateDtoToDetailsDto(creationDetails);
+        employeeDetailsDto.setRoles(creationDetails.getRoles());
 
         // Encode password & save into db
         String encodedPassword = passwordEncoder.encode(employeeDetailsDto.getPassword());
@@ -77,6 +78,11 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
         return employeeRepository.findByEmail(username).orElseThrow(
                 () -> new BadCredentialsException("User Not found with Email "+username)
         );
+    }
+
+    @Override
+    public Employee findByUsername(String username) throws UsernameNotFoundException {
+        return employeeRepository.findByEmail(username).orElse(null);
     }
 
     @Override

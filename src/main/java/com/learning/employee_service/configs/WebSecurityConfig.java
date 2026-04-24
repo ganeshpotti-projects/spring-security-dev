@@ -1,6 +1,8 @@
 package com.learning.employee_service.configs;
 
+import com.learning.employee_service.enums.EmployeeRole;
 import com.learning.employee_service.filters.JwtAuthFilter;
+import com.learning.employee_service.handlers.OAuth2SuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,19 +19,32 @@ public class WebSecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
 
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
+
+    private static final String[] publicRoutes = {
+            "/admin/employees/**", "/auth/**", "/home.html"
+    };
+
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/admin/employees/**", "/auth/**").permitAll()
-                                .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers(publicRoutes).permitAll()
+                                .requestMatchers("/admin/**").hasRole(EmployeeRole.ADMIN.name())
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .formLogin(form -> form
+                        .permitAll()
+                )
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .oauth2Login(oauth2Config -> oauth2Config
+                        .failureUrl("/login?error=true")
+                        .successHandler(oAuth2SuccessHandler)
+                );
         return http.build();
     }
 }

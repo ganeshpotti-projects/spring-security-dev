@@ -22,4 +22,6 @@ public interface EmployeeService {
     EmployeeDetailsDto updateEmployeeByAdmin(Long employeeId, EmployeeAdminPatchDto employeeAdminPatchDto);
 
     Employee getEmployeeById(Long employeeId);
+
+    Employee findByUsername(String username);
 }

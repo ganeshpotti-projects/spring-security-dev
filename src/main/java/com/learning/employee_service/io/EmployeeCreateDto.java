@@ -1,7 +1,10 @@
 package com.learning.employee_service.io;
 
+import com.learning.employee_service.enums.EmployeeRole;
 import jakarta.validation.constraints.*;
 import lombok.*;
+
+import java.util.Set;
 
 @Getter
 @Setter
@@ -28,4 +31,6 @@ public class EmployeeCreateDto {
             message = "Password must be 8-20 chars, include upper, lower, number, special char, and no spaces"
     )
     private String password;
+
+    private Set<EmployeeRole> roles;
 }

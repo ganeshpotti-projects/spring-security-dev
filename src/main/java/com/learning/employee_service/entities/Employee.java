@@ -1,16 +1,20 @@
 package com.learning.employee_service.entities;
 
+import com.learning.employee_service.enums.EmployeeRole;
 import com.learning.employee_service.enums.EmployeeStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -31,10 +35,14 @@ public class Employee implements UserDetails {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false, unique = true, length = 10)
+    @Column( unique = true, length = 10)
     private String phoneNumber;
 
     private Integer age;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Enumerated(value = EnumType.STRING)
+    private Set<EmployeeRole> roles;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -48,12 +56,13 @@ public class Employee implements UserDetails {
     @Column(nullable = false)
     private EmployeeStatus status;
 
-    @Column(nullable = false)
     private String password;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return roles.stream()
+                .map(role -> new SimpleGrantedAuthority("ROLE_"+role.name()))
+                .collect(Collectors.toSet());
     }
 
     @Override

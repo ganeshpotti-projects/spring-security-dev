@@ -1,9 +1,11 @@
 package com.learning.employee_service.dto;
 
+import com.learning.employee_service.enums.EmployeeRole;
 import com.learning.employee_service.enums.EmployeeStatus;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -28,4 +30,6 @@ public class EmployeeDetailsDto {
     private EmployeeStatus status;
 
     private String password;
+
+    private Set<EmployeeRole> roles;
 }

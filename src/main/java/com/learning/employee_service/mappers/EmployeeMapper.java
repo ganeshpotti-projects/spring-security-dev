@@ -6,7 +6,7 @@ import com.learning.employee_service.io.EmployeeAdminPatchDto;
 import com.learning.employee_service.io.EmployeeCreateDto;
 import org.mapstruct.*;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", builder = @Builder(disableBuilder = true))
 public interface EmployeeMapper {
 
     EmployeeDetailsDto mapCreateDtoToDetailsDto(EmployeeCreateDto dto);

@@ -22,13 +22,22 @@ public class JwtService {
         return Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8));
     }
 
-    public String generateToken(Employee employee){
+    public String generateAccessToken(Employee employee){
         return Jwts.builder()
                 .subject(employee.getId().toString())
                 .claim("email", employee.getEmail())
-                .claim("roles", Set.of("ADMIN", "USER"))
+                .claim("roles", employee.getRoles().toString())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 1000*60*10))
+                .signWith(getSecretKey())
+                .compact();
+    }
+
+    public String generateRefreshToken(Employee employee){
+        return Jwts.builder()
+                .subject(employee.getId().toString())
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + 1000L* 60*60*24*30*6))
                 .signWith(getSecretKey())
                 .compact();
     }

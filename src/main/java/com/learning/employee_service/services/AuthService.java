@@ -5,4 +5,6 @@ import com.learning.employee_service.io.JwtResponse;
 
 public interface AuthService {
     JwtResponse login(EmployeeLoginRequest employeeLoginRequest);
+
+    JwtResponse refreshToken(String refreshToken);
 }
