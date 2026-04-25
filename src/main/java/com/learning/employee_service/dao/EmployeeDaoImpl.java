@@ -59,4 +59,11 @@ public class EmployeeDaoImpl implements EmployeeDao{
     public Boolean employeeExistsByEmail(String email) {
         return employeeRepository.existsByEmail(email);
     }
+
+    @Override
+    public Boolean employeeExistsByEmailOrPhoneNumber(String email, String phoneNumber) {
+        return employeeRepository.existsByEmailOrPhoneNumber(email, phoneNumber);
+    }
+
+
 }

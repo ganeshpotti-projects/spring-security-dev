@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -43,15 +44,24 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
 
     @Override
     public EmployeeDetailsDto createEmployee(EmployeeCreateDto creationDetails) {
-        EmployeeDetailsDto employeeDetailsDto = employeeMapper.mapCreateDtoToDetailsDto(creationDetails);
-        employeeDetailsDto.setRoles(creationDetails.getRoles());
+        try{
+            if(employeeDao.employeeExistsByEmailOrPhoneNumber(creationDetails.getEmail(), creationDetails.getPhoneNumber()))
+                throw new ResourceNotFoundException("Employee Found with same Email or Phone Number");
 
-        // Encode password & save into db
-        String encodedPassword = passwordEncoder.encode(employeeDetailsDto.getPassword());
-        employeeDetailsDto.setPassword(encodedPassword);
+            EmployeeDetailsDto employeeDetailsDto = employeeMapper.mapCreateDtoToDetailsDto(creationDetails);
+            employeeDetailsDto.setRoles(creationDetails.getRoles());
 
-        employeeDetailsDto.setStatus(EmployeeStatus.ACTIVE);
-        return employeeDao.createOrUpdateEmployee(employeeDetailsDto);
+            // Encode password & save into db
+            String encodedPassword = passwordEncoder.encode(employeeDetailsDto.getPassword());
+            employeeDetailsDto.setPassword(encodedPassword);
+
+            employeeDetailsDto.setStatus(EmployeeStatus.ACTIVE);
+            return employeeDao.createOrUpdateEmployee(employeeDetailsDto);
+        } catch (ResponseStatusException ex){
+            throw ex;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

@@ -57,9 +57,6 @@ public class PostServiceImpl implements PostService{
         if(!postDao.postExistsById(id))
             throw new ResourceNotFoundException("Post not found with Id: "+ id);
         PostDetailsDto postDetailsDto = postDao.getPost(id);
-        Employee employee = (Employee) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(!Objects.equals(employee.getId(), postDetailsDto.getEmployee().getId()))
-            throw new AccessDeniedException("Employee not allowed to update");
         postMapper.mapPatchRequestToDetailsDto(postPatchRequest, postDetailsDto);
         postDetailsDto = postDao.createOrUpdatePost(postDetailsDto);
         return postMapper.mapDetailsDtoToResponse(postDetailsDto);

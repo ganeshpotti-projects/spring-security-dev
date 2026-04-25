@@ -16,4 +16,6 @@ public interface EmployeeDao {
     Boolean employeeExistsById(Long employeeId);
 
     Boolean employeeExistsByEmail(String email);
+
+    Boolean employeeExistsByEmailOrPhoneNumber(String email, String phoneNumber);
 }
